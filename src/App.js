@@ -1,24 +1,40 @@
-import logo from './logo.svg';
 import './App.css';
+import { HashRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import FormPage from './pages/FormPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import UserContext from './context/UserContext';
+import { useState } from 'react';
+import PrivateRoute from './components/PrivateRoute';
+
+
+
 
 function App() {
+
+  const [user, setUser] = useState(null);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <UserContext.Provider value={{user, setUser}}>
+    <Router>     
+        <Switch>
+            <Route exact path='/'>
+                {user? <Redirect to='/form'/> : <LoginPage /> }
+            </Route>
+            <Route path= '/register'>
+              {user? <Redirect to='/form'/> : <RegisterPage />}
+            </Route>
+            <PrivateRoute path='/form' user={user} component={FormPage} />
+            <Route path='*'>
+              <Redirect to='/' />
+            </Route>
+        </Switch>
+    </Router>
+    </UserContext.Provider> 
+      
+  
+   
+   
   );
 }
 
